@@ -3,7 +3,7 @@
 use Test::More tests => 1;
 
 BEGIN {
-	use_ok( 'Test::NoPlan' );
+    use_ok('Test::NoPlan');
 }
 
-diag( "Testing Test::NoPlan $Test::NoPlan::VERSION, Perl $], $^X" );
+diag("Testing Test::NoPlan $Test::NoPlan::VERSION, Perl $], $^X");
