@@ -8,6 +8,7 @@ my $builder = Module::Build->new(
     dist_author       => 'Duncan Ferguson <duncan_j_ferguson@yahoo.co.uk>',
     dist_version_from => 'lib/Test/NoPlan.pm',
     build_requires    => {
+        'version'             => 0,
         'Test::More'          => 0,
         'Test::Perl::Critic'  => '0',
         'Test::PerlTidy'      => '0',
