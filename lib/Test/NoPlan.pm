@@ -3,17 +3,146 @@ package Test::NoPlan;
 use warnings;
 use strict;
 
+use version; our $VERSION = version->new('0.0.1');
+
+use base 'Exporter';
+use Test::Builder::Module;
+
+use FindBin qw($Bin);
+use Cwd;
+use File::Spec;
+use Carp;
+
+#our @EXPORT    = qw( all_plans_ok );
+#our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
+our @EXPORT_OK = qw( all_plans_ok get_file_list check_file_for_no_plan );
+
+{
+    my $CLASS = __PACKAGE__;
+
+    my @allowed_args = qw/ check_files recurse topdir _stdout _stderr /;
+
+    sub all_plans_ok {
+        my ($arg_ref) = @_;
+        _check_args($arg_ref);
+
+        my @files = get_file_list($arg_ref);
+
+        my $test = Test::Builder->create();
+        if($arg_ref->{_stdout}) {
+            if ( ref $arg_ref->{_stdout} ne 'IO::Scalar' ) {
+                croak '_stdout is not an IO::Scalar';
+            }
+            $test->output($arg_ref->{_stdout});
+        }
+        if($arg_ref->{_stderr}) {
+            if ( ref $arg_ref->{_stderr} ne 'IO::Scalar' ) {
+                croak '_stderr is not an IO::Scalar';
+            }
+            $test->failure_output($arg_ref->{_stderr});
+        }
+        $test->plan( tests => scalar @files );
+
+        foreach my $file (@files) {
+            $test->ok( check_file_for_no_plan($file),
+                "'$file' has 'no_plan'" );
+        }
+
+        return 1;
+    }
+
+    sub _check_args {
+        my ($arg_ref) = @_;
+        if ( ref($arg_ref) ne 'HASH' ) {
+            croak 'arguments do not seem to be a hash -> ', ref($arg_ref);
+        }
+
+        my @unknown_args;
+
+        foreach my $arg ( sort( keys(%$arg_ref) ) ) {
+            if ( !grep {/^$arg$/} @allowed_args ) {
+                push @unknown_args, $arg;
+            }
+        }
+        if (@unknown_args) {
+            die 'Unknown arguments: ', join( ',', @unknown_args );
+        }
+        return;
+    }
+
+    sub get_file_list {
+        my ($arg_ref) = @_;
+
+        _check_args($arg_ref);
+
+        my $topdir = $Bin;
+        if ( $arg_ref->{topdir} && $arg_ref->{topdir} ne '.' ) {
+            $topdir = $arg_ref->{topdir};
+        }
+        if ( defined($topdir) && length $topdir && !-d $topdir ) {
+            die( 'Invalid topdir provided: "' . $topdir . '"' );
+        }
+        my $cwd = getcwd();
+        $topdir =~ s!$cwd/!!;
+
+        my $check_files = qr/^.*\.t$/xsm;
+        if ( $arg_ref->{check_files} ) {
+            $check_files = $arg_ref->{check_files};
+        }
+        if ( ref($check_files) ne 'Regexp' ) {
+            die 'invalid check_files provided';
+        }
+
+        my @files = ();
+        opendir( my $topdir_dh, $topdir )
+            or die 'Unable to read ', $topdir, ': ', $!;
+
+        while ( my $dir_entry = readdir($topdir_dh) ) {
+            next if ( $dir_entry =~ m/^\./xsm );
+
+            my $resolved_entry = File::Spec->catfile( $topdir, $dir_entry );
+
+            if ( -d $resolved_entry ) {
+                if ( $arg_ref->{recurse} ) {
+                    my %new_args = %$arg_ref;
+                    $new_args{topdir} = $resolved_entry;
+                    push @files, get_file_list( \%new_args );
+
+                    #{ %{$arg_ref}, topdir => $resolved_entry, } );
+                }
+                next;
+            }
+
+            if ( $dir_entry =~ $check_files ) {
+                push @files, $resolved_entry;
+            }
+        }
+
+        closedir($topdir_dh) or die 'Unable to close ', $topdir, ': ', $!;
+
+        return sort @files;
+    }
+
+    sub check_file_for_no_plan {
+        my ($file) = @_;
+
+        open( my $file_fh, '<', $file )
+            or die 'Unable to read ' . $file . ': ', $!;
+        my $file_contents = <$file_fh>;
+
+        my $return_code = 1;
+        if ( $file_contents =~ m/^.*(?<!\#).*no_plan/xsm ) {
+            $return_code = 0;
+        }
+        close($file_fh);
+
+        return $return_code;
+    }
+}
+
 =head1 NAME
 
 Test::NoPlan - The great new Test::NoPlan!
-
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
@@ -33,19 +162,32 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =head1 FUNCTIONS
 
-=head2 function1
+=head2 all_plans_ok({ [ options ] });
 
-=cut
+Searches for and checks files within the current directory.  Options are
 
-sub function1 {
-}
+=over
 
-=head2 function2
+=item topdir => '.'
 
-=cut
+directory to begin search in - relative to the top directory in the project
+(i.e. where the Makefile.OPL/Build.PL files are located
 
-sub function2 {
-}
+=item check_files => qr/^.*\.t/xsm
+
+Regexp used to identify files to check - i.e. files ending in .t
+
+=item recurse => 0
+
+Recurse into any subdirectories
+
+=back
+
+=head2 get_file_list( { [ options ] } );
+
+Return a list of files to be checked - uses same options as C<all_plans_ok>
+
+=head2 check_file_for_no_plan( $filename );
 
 =head1 AUTHOR
 
