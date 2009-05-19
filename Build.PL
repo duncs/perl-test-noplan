@@ -15,7 +15,6 @@ my $builder = Module::Build->new(
         'Test::Pod'           => '0',
         'Test::Pod::Coverage' => '0',
         'Devel::Cover'        => '0.42',
-        'Perl::Critic::Bangs' => '1.02',
     },
     add_to_cleanup     => ['Test-NoPlan-*'],
     create_makefile_pl => 'traditional',
