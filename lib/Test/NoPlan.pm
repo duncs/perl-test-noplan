@@ -29,23 +29,25 @@ our @EXPORT_OK = qw( all_plans_ok get_file_list check_file_for_no_plan );
         my @files = get_file_list($arg_ref);
 
         my $test = Test::Builder->create();
-        if($arg_ref->{_stdout}) {
+        if ( $arg_ref->{_stdout} ) {
             if ( ref $arg_ref->{_stdout} ne 'IO::Scalar' ) {
                 croak '_stdout is not an IO::Scalar';
             }
-            $test->output($arg_ref->{_stdout});
+            $test->output( $arg_ref->{_stdout} );
         }
-        if($arg_ref->{_stderr}) {
+        if ( $arg_ref->{_stderr} ) {
             if ( ref $arg_ref->{_stderr} ne 'IO::Scalar' ) {
                 croak '_stderr is not an IO::Scalar';
             }
-            $test->failure_output($arg_ref->{_stderr});
+            $test->failure_output( $arg_ref->{_stderr} );
         }
         $test->plan( tests => scalar @files );
 
         foreach my $file (@files) {
-            $test->ok( check_file_for_no_plan($file),
-                "'$file' has 'no_plan'" );
+            $test->ok(
+                check_file_for_no_plan($file),
+                "'$file' does not have 'no_plan' set"
+            );
         }
 
         return 1;
@@ -126,15 +128,39 @@ our @EXPORT_OK = qw( all_plans_ok get_file_list check_file_for_no_plan );
     sub check_file_for_no_plan {
         my ($file) = @_;
 
+        if ( !-s $file ) {
+            croak "'$file' does not exist or is empty";
+        }
+
         open( my $file_fh, '<', $file )
             or die 'Unable to read ' . $file . ': ', $!;
-        my $file_contents = <$file_fh>;
+        my $file_contents;
+        {
+            local $/ = undef;
+            $file_contents = <$file_fh>;
+        }
+        close($file_fh)
+            or die 'Unable to close ' . $file . ': ', $!;
 
+        # by default everything is ok, for those tests that do not use
+        # Test::More directly
         my $return_code = 1;
-        if ( $file_contents =~ m/^.*(?<!\#).*no_plan/xsm ) {
+
+        # look for uncommented lines containing Test::More or plan
+        # followed by uncommented test keyword - these are ok
+        if (   $file_contents =~ m/^[^#]*\bTest::More\b[^#]*\btests\b/xm
+            || $file_contents =~ m/^[^#]*\bplan\b[^#]*\btests\b/xm )
+        {
+            $return_code = 1;
+        }
+
+        # look for uncommented lines containing Test::More or plan
+        # followed by uncommented no_plan keyword - these are problems
+        elsif ($file_contents =~ m/^[^#]*\bTest::More\b[^#]*\bno_plan\b/xm
+            || $file_contents =~ m/^[^#]*\bplan\b[^#]*\bno_plan\b/xm )
+        {
             $return_code = 0;
         }
-        close($file_fh);
 
         return $return_code;
     }
