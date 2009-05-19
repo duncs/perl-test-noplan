@@ -215,6 +215,9 @@ Return a list of files to be checked - uses same options as C<all_plans_ok>
 
 =head2 check_file_for_no_plan( $filename );
 
+Check the given file for instances of uncommented 'no_plan' usage.  Returns
+0 for problem, 1 for no problem found.
+
 =head1 AUTHOR
 
 Duncan Ferguson, C<< <duncan_j_ferguson at yahoo.co.uk> >>
