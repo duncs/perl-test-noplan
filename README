@@ -3,7 +3,6 @@ Test-NoPlan
 A small test module to ensure all test scripts specify the correct number of
 tests to be run rather than using 'no_plan'.
 
-
 INSTALLATION
 
 To install this module, run the following commands:
@@ -34,6 +33,8 @@ You can also look for information at:
     Search CPAN
         http://search.cpan.org/dist/Test-NoPlan/
 
+    Source (git)
+        git://github.com/duncs/perl-test-noplan.git
 
 COPYRIGHT AND LICENCE
 
