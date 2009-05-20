@@ -55,7 +55,7 @@ our @EXPORT_OK = qw( all_plans_ok get_file_list check_file_for_no_plan );
 
     sub _check_args {
         my ($arg_ref) = @_;
-        if ( ref($arg_ref) ne 'HASH' ) {
+        if ( defined($arg_ref) && ref($arg_ref) ne 'HASH' ) {
             croak 'arguments do not seem to be a hash -> ', ref($arg_ref);
         }
 
@@ -87,7 +87,7 @@ our @EXPORT_OK = qw( all_plans_ok get_file_list check_file_for_no_plan );
         my $cwd = getcwd();
         $topdir =~ s!$cwd/!!;
 
-        my $check_files = qr/^.*\.t$/xsm;
+        my $check_files = qr/\.t$/xsm;
         if ( $arg_ref->{check_files} ) {
             $check_files = $arg_ref->{check_files};
         }
@@ -166,46 +166,56 @@ our @EXPORT_OK = qw( all_plans_ok get_file_list check_file_for_no_plan );
     }
 }
 
+1;    # End of Test::NoPlan
+
+__END__
+
+=pod
+
 =head1 NAME
 
-Test::NoPlan - The great new Test::NoPlan!
+Test::NoPlan - check perl test files for 'no_plan'
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+It is a good idea to ensure you have defined how many tests should be run
+within each test script - to catch cases where tests bomb out part way 
+through so you know how many tests were not actually run.  This module
+checks all your test plan files to ensure 'no_plan' is not used.
 
-Perhaps a little code snippet.
+You can check one file:
 
-    use Test::NoPlan;
+    use Test::NoPlan qw/ check_file_for_no_plan /;
+    use Test::More tests => 1;
+    check_file_for_no_plan('t/test.t');
 
-    my $foo = Test::NoPlan->new();
-    ...
+or check all files:
+
+    use Test::NoPlan qw/ all_plans_ok /;
+    all_plans_ok();
 
 =head1 EXPORT
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+=head2 all_plans_ok({ options });
 
-=head1 FUNCTIONS
-
-=head2 all_plans_ok({ [ options ] });
-
-Searches for and checks files within the current directory.  Options are
+Searches for and checks *.t files within the current directory.  Options (with 
+defaults shown) are:
 
 =over
 
 =item topdir => '.'
 
 directory to begin search in - relative to the top directory in the project
-(i.e. where the Makefile.OPL/Build.PL files are located
+(i.e. where the Makefile.PL or Build.PL file is located)
 
-=item check_files => qr/^.*\.t/xsm
+=item check_files => qr/\.t$/xsm
 
-Regexp used to identify files to check - i.e. files ending in .t
+Regexp used to identify files to check - i.e. files ending in '.t' - note, this
+just checks the basename of the files; the path is excluded.
 
 =item recurse => 0
 
-Recurse into any subdirectories
+Recurse into any subdirectories - not done by default.
 
 =back
 
@@ -220,23 +230,21 @@ Check the given file for instances of uncommented 'no_plan' usage.  Returns
 
 =head1 AUTHOR
 
-Duncan Ferguson, C<< <duncan_j_ferguson at yahoo.co.uk> >>
+Duncan Ferguson, C<< < duncs@cpan.org > >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-test-noplan at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Test-NoPlan>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
+Please report any bugs or feature requests to 
+C<bug-test-noplan at rt.cpan.org>, or through the web interface at 
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Test-NoPlan>.  I will be 
+notified, and then you'll automatically be notified of progress on your bug 
+as I make changes.
 
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
     perldoc Test::NoPlan
-
 
 You can also look for information at:
 
@@ -258,11 +266,15 @@ L<http://cpanratings.perl.org/d/Test-NoPlan>
 
 L<http://search.cpan.org/dist/Test-NoPlan/>
 
+=item * Source code repository at GitHub
+
+L<http://github.com/duncs/perl-test-noplan>
+
+L<git://github.com/duncs/perl-test-noplan.git>
+
 =back
 
-
 =head1 ACKNOWLEDGEMENTS
-
 
 =head1 COPYRIGHT & LICENSE
 
@@ -271,7 +283,4 @@ Copyright 2009 Duncan Ferguson, all rights reserved.
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-
 =cut
-
-1;    # End of Test::NoPlan
