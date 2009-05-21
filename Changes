@@ -5,4 +5,5 @@ Revision history for Test-NoPlan
 
 0.0.2   21st May 2009
     Export all_plans_ok by default rather than by request since this is why the module is used (see PBP: Exporting)
+    Amend test failure message to be a little clearer
 

@@ -43,10 +43,8 @@ our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
         $test->plan( tests => scalar @files );
 
         foreach my $file (@files) {
-            $test->ok(
-                check_file_for_no_plan($file),
-                "'$file' does not have 'no_plan' set"
-            );
+            $test->ok( check_file_for_no_plan($file),
+                "'$file' has 'no_plan' set" );
         }
 
         return 1;

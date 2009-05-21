@@ -24,15 +24,15 @@ all_plans_ok(
 );
 
 $stdout_expected = q{1..3
-not ok 1 - 't/subdir/no_plan_0.t' does not have 'no_plan' set
-not ok 2 - 't/subdir/no_plan_1.t' does not have 'no_plan' set
-ok 3 - 't/subdir/plan_0.t' does not have 'no_plan' set
+not ok 1 - 't/subdir/no_plan_0.t' has 'no_plan' set
+not ok 2 - 't/subdir/no_plan_1.t' has 'no_plan' set
+ok 3 - 't/subdir/plan_0.t' has 'no_plan' set
 };
 $stderr_expected = qr{^
-#   Failed test ''t/subdir/no_plan_0.t' does not have 'no_plan' set'
+#   Failed test ''t/subdir/no_plan_0.t' has 'no_plan' set'
 #   at t/subdir.t line \d+.
 
-#   Failed test ''t/subdir/no_plan_1.t' does not have 'no_plan' set'
+#   Failed test ''t/subdir/no_plan_1.t' has 'no_plan' set'
 #   at t/subdir.t line \d+.
 $}xsm;
 
@@ -55,15 +55,15 @@ all_plans_ok(
 );
 
 $stdout_expected = q{1..3
-not ok 1 - 't/subdir/no_plan_0.s' does not have 'no_plan' set
-not ok 2 - 't/subdir/no_plan_1.s' does not have 'no_plan' set
-ok 3 - 't/subdir/plan_0.s' does not have 'no_plan' set
+not ok 1 - 't/subdir/no_plan_0.s' has 'no_plan' set
+not ok 2 - 't/subdir/no_plan_1.s' has 'no_plan' set
+ok 3 - 't/subdir/plan_0.s' has 'no_plan' set
 };
 $stderr_expected = qr{^
-#   Failed test ''t/subdir/no_plan_0.s' does not have 'no_plan' set'
+#   Failed test ''t/subdir/no_plan_0.s' has 'no_plan' set'
 #   at t/subdir.t line \d+.
 
-#   Failed test ''t/subdir/no_plan_1.s' does not have 'no_plan' set'
+#   Failed test ''t/subdir/no_plan_1.s' has 'no_plan' set'
 #   at t/subdir.t line \d+.
 $}xsm;
 
