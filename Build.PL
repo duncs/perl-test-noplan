@@ -11,7 +11,7 @@ my $builder = Module::Build->new(
         'version'    => 0,
         'Test::More' => 0,
     },
-    add_to_cleanup     => ['Test-NoPlan-*'],
+    add_to_cleanup     => [ 'Test-NoPlan-*', 'Debian_CPANTS.txt', ],
     create_makefile_pl => 'traditional',
 );
 
