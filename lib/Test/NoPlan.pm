@@ -267,8 +267,6 @@ L<http://search.cpan.org/dist/Test-NoPlan/>
 
 L<http://github.com/duncs/perl-test-noplan>
 
-L<git://github.com/duncs/perl-test-noplan.git>
-
 =back
 
 =head1 ACKNOWLEDGEMENTS
