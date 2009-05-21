@@ -3,7 +3,7 @@ package Test::NoPlan;
 use warnings;
 use strict;
 
-use version; our $VERSION = version->new('0.0.1');
+use version; our $VERSION = version->new('0.0.2');
 
 use base 'Exporter';
 use Test::Builder::Module;
