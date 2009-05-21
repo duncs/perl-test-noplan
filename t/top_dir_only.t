@@ -1,4 +1,4 @@
-use Test::NoPlan qw/ all_plans_ok /;
+use Test::NoPlan;
 
 all_plans_ok(
     {   recurse     => 0,

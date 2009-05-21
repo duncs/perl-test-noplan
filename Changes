@@ -1,5 +1,8 @@
 Revision history for Test-NoPlan
 
 0.0.1   20th May 2009
-        First version public, released on an unsuspecting world.
+    First version public, released on an unsuspecting world.
+
+0.0.2   21st May 2009
+    Export all_plans_ok by default rather than by request since this is why the module is used (see PBP: Exporting)
 

@@ -13,9 +13,8 @@ use Cwd;
 use File::Spec;
 use Carp;
 
-#our @EXPORT    = qw( all_plans_ok );
-#our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
-our @EXPORT_OK = qw( all_plans_ok get_file_list check_file_for_no_plan );
+our @EXPORT    = qw( all_plans_ok );
+our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
 
 {
     my $CLASS = __PACKAGE__;

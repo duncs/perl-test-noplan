@@ -4,7 +4,7 @@ use File::Spec;
 use Test::More tests => 4;
 use IO::Scalar;
 
-use Test::NoPlan qw/ all_plans_ok /;
+use Test::NoPlan;
 
 my $stdout = '';
 my $stderr = '';
