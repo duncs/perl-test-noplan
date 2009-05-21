@@ -14,8 +14,8 @@ my @found;
     't/check_file.t',   't/filelist.t',
     't/perlcritic.t',   't/perltidy.t',
     't/pod-coverage.t', 't/pod.t',
-    't/pod_coverage.t', 't/subdir.t',
-    't/top_dir_only.t', 't/zz_defaults_test.t',
+    't/subdir.t',       't/top_dir_only.t',
+    't/zz_defaults_test.t',
 );
 @found = get_file_list( { topdir => '.', } );
 is_deeply( \@found, \@expected, 'found correct files' );
@@ -25,10 +25,9 @@ is_deeply( \@found, \@expected, 'found correct files' );
     't/check_file.t',       't/filelist.t',
     't/perlcritic.t',       't/perltidy.t',
     't/pod-coverage.t',     't/pod.t',
-    't/pod_coverage.t',     't/subdir.t',
-    't/subdir/no_plan_0.t', 't/subdir/no_plan_1.t',
-    't/subdir/plan_0.t',    't/top_dir_only.t',
-    't/zz_defaults_test.t',
+    't/subdir.t',           't/subdir/no_plan_0.t',
+    't/subdir/no_plan_1.t', 't/subdir/plan_0.t',
+    't/top_dir_only.t',     't/zz_defaults_test.t',
 );
 @found = get_file_list( { topdir => '.', recurse => 1, } );
 is_deeply( \@found, \@expected, 'found correct files' );
