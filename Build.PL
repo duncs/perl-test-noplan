@@ -3,6 +3,12 @@ use warnings;
 use Module::Build;
 
 my $builder = Module::Build->new(
+    meta_merge => {
+        resources => {
+            repository => 'http://github.com/duncs/perl-test-noplan',
+        },
+    },
+
     module_name       => 'Test::NoPlan',
     license           => 'perl',
     dist_author       => 'Duncan Ferguson <duncan_j_ferguson@yahoo.co.uk>',
