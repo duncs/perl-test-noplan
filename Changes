@@ -9,3 +9,5 @@ Revision history for Test-NoPlan
     Add in Kwalitee tests
     Amend some prereqs and tests to be optional, for dev work only
 
+0.0.3   25th March 2010
+    Add in resource keywords (repository, bugtracker, homepage) to META.yml and Build.PL
