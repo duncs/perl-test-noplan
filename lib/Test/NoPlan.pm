@@ -119,7 +119,7 @@ our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
 
         closedir($topdir_dh) or die 'Unable to close ', $topdir, ': ', $!;
 
-        return sort @files;
+        return wantarray ? sort @files : "@files";
     }
 
     sub check_file_for_no_plan {
