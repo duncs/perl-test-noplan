@@ -11,3 +11,6 @@ Revision history for Test-NoPlan
 
 0.0.3   25th March 2010
     Add in resource keywords (repository, bugtracker, homepage) to META.yml and Build.PL
+
+0.0.4   7th April 2010
+    Allow all_plans_ok constructor method to be changed from create to new, depending on how tests will be called (i.e. single test in file uses 'create', multiple tests should use 'new')

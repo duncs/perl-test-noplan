@@ -3,7 +3,7 @@ package Test::NoPlan;
 use warnings;
 use strict;
 
-use version; our $VERSION = version->new('0.0.3');
+use version; our $VERSION = version->new('0.0.4');
 
 use base 'Exporter';
 use Test::Builder::Module;
@@ -19,7 +19,8 @@ our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
 {
     my $CLASS = __PACKAGE__;
 
-    my @allowed_args = qw/ check_files recurse topdir _stdout _stderr /;
+    my @allowed_args
+        = qw/ check_files recurse topdir _stdout _stderr method /;
 
     sub all_plans_ok {
         my ($arg_ref) = @_;
@@ -65,6 +66,18 @@ our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
         }
         if (@unknown_args) {
             die 'Unknown arguments: ', join( ',', @unknown_args );
+        }
+
+        if ( $arg_ref->{method} ) {
+            if (   $arg_ref->{method} ne 'create'
+                && $arg_ref->{method} ne 'new' )
+            {
+                croak 'Method must be one of "create" or "new", not "',
+                    $arg_ref->{method}, '"';
+            }
+        }
+        else {
+            $arg_ref->{method} = 'create';
         }
         return;
     }
@@ -213,6 +226,13 @@ just checks the basename of the files; the path is excluded.
 =item recurse => 0
 
 Recurse into any subdirectories - not done by default.
+
+=item method => '<create|new>' [default: create]
+
+Amend the method by which the test object is created.  By default 'create' 
+is used which is correct for tesst files containing only the 'all_plans_ok' 
+test.  If multiple tests are held within the same tesst file then 'new' 
+should be used so a single test object is created and shared
 
 =back
 
