@@ -14,3 +14,8 @@ Revision history for Test-NoPlan
 
 0.0.4   7th April 2010
     Allow all_plans_ok constructor method to be changed from create to new, depending on how tests will be called (i.e. single test in file uses 'create', multiple tests should use 'new')
+
+0.0.5   7th April 2010
+    Fix silly mistake in 0.0.4 and rework tests accordingly
+    Add in 'ignore_files' option
+    Add THANKS file

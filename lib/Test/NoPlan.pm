@@ -3,7 +3,7 @@ package Test::NoPlan;
 use warnings;
 use strict;
 
-use version; our $VERSION = version->new('0.0.4');
+use version; our $VERSION = version->new('0.0.5');
 
 use base 'Exporter';
 use Test::Builder::Module;
@@ -20,15 +20,17 @@ our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
     my $CLASS = __PACKAGE__;
 
     my @allowed_args
-        = qw/ check_files recurse topdir _stdout _stderr method /;
+        = qw/ check_files recurse topdir _stdout _stderr method ignore_files /;
 
     sub all_plans_ok {
         my ($arg_ref) = @_;
+        $arg_ref->{method} ||= 'create';
         _check_args($arg_ref);
 
         my @files = get_file_list($arg_ref);
 
-        my $test = Test::Builder->create();
+        my $method = $arg_ref->{method};
+        my $test   = Test::Builder->$method;
         if ( $arg_ref->{_stdout} ) {
             if ( ref $arg_ref->{_stdout} ne 'IO::Scalar' ) {
                 croak '_stdout is not an IO::Scalar';
@@ -41,14 +43,24 @@ our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
             }
             $test->failure_output( $arg_ref->{_stderr} );
         }
-        $test->plan( tests => scalar @files );
+
+        if ( $method eq 'create' ) {
+            $test->plan( tests => scalar @files );
+        }
+        else {
+            $test->no_ending();
+        }
 
         foreach my $file (@files) {
             $test->ok( check_file_for_no_plan($file),
                 "'$file' has 'no_plan' set" );
         }
 
-        return 1;
+        if ( $method ne 'create' ) {
+            $test->reset_outputs();
+        }
+
+        return scalar @files;
     }
 
     sub _check_args {
@@ -76,9 +88,6 @@ our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
                     $arg_ref->{method}, '"';
             }
         }
-        else {
-            $arg_ref->{method} = 'create';
-        }
         return;
     }
 
@@ -105,6 +114,11 @@ our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
             die 'invalid check_files provided';
         }
 
+        my $ignore_files = qr/^\..*/;
+        if ( $arg_ref->{ignore_files} ) {
+            $ignore_files = $arg_ref->{ignore_files};
+        }
+
         my @files = ();
         opendir( my $topdir_dh, $topdir )
             or die 'Unable to read ', $topdir, ': ', $!;
@@ -125,7 +139,7 @@ our @EXPORT_OK = qw( get_file_list check_file_for_no_plan );
                 next;
             }
 
-            if ( $dir_entry =~ $check_files ) {
+            if ( $dir_entry =~ $check_files && $dir_entry !~ $ignore_files ) {
                 push @files, $resolved_entry;
             }
         }
@@ -222,6 +236,11 @@ directory to begin search in - relative to the top directory in the project
 
 Regexp used to identify files to check - i.e. files ending in '.t' - note, this
 just checks the basename of the files; the path is excluded.
+
+=item ignore_files => qr/^\..*$/xsm
+
+Regexp used to identify files to ignore - i.e. files starting with '.' - note, 
+this just checks the basename of the files; the path is excluded.  
 
 =item recurse => 0
 

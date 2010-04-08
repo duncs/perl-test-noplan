@@ -17,10 +17,10 @@ name: Test-NoPlan
 provides:
   Test::NoPlan:
     file: lib/Test/NoPlan.pm
-    version: v0.0.3
+    version: v0.0.5
 resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Test-NoPlan
   homepage: http://github.com/duncs/perl-test-noplan
   license: http://dev.perl.org/licenses/
   repository: http://github.com/duncs/perl-test-noplan
-version: v0.0.3
+version: v0.0.5
