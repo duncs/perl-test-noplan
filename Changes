@@ -19,3 +19,6 @@ Revision history for Test-NoPlan
     Fix silly mistake in 0.0.4 and rework tests accordingly
     Add in 'ignore_files' option
     Add THANKS file
+
+0.0.6   9th April 2010
+    Renamed THANKS as AUTHORS
